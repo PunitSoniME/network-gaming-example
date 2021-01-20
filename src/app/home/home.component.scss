@@ -1,0 +1,53 @@
+.main {
+    display: grid;
+    grid-template-columns: 30% 1fr;
+    gap: 20px;
+}
+
+.sidebar {
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+}
+
+.custom-toast {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+}
+
+.new-player {
+    font-size: 1.2rem;
+}
+
+.score {
+    font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+    .main {
+        grid-template-columns: 40% 1fr;
+        gap: 10px;
+    }
+}
+
+.counting-down {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.center {
+    display: flex;
+    align-items: center;
+}
+
+.round-winner {
+    background-color: var(--success);
+    color: var(--white);
+}
+
+.required-label:after {
+    content: " *";
+    color: var(--danger);
+    font-weight: bold;
+}

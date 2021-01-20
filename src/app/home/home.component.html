@@ -1,0 +1,205 @@
+<div class="row my-3">
+    <div class="col-3">
+
+        <div class="card border-0">
+            <h5 class="card-header text-white bg-primary">Register for the game</h5>
+
+            <div class="card-body px-0 pb-0">
+                <form [formGroup]="form">
+
+                    <div class="alert alert-warning" role="alert">
+                        <strong>Note</strong> Do not refresh this page after register.
+                    </div>
+
+                    <div class="form-group">
+                        <label for="name" class="required-label"
+                            [ngClass]="{'text-danger': form.controls['name'].touched && form.controls['name'].invalid }">
+                            <b>Name</b>
+                        </label>
+                        <input type="text" class="form-control" name="name" id="name" placeholder="Enter Name"
+                            formControlName="name"
+                            [ngClass]="{'is-invalid': form.controls['name'].touched && form.controls['name'].invalid }" />
+                        <div class="invalid-feedback"
+                            *ngIf="form.controls['name'].touched && form.controls['name'].invalid">
+                            Name is required
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="first" class="required-label"
+                            [ngClass]="{'text-danger': form.controls['first'].touched && form.controls['first'].invalid }">
+                            <b>First Number</b>
+                        </label>
+                        <input type="number" class="form-control" formControlName="first" name="first" id="first"
+                            placeholder="Number between 1 - 10"
+                            [ngClass]="{'is-invalid': form.controls['first'].touched && form.controls['first'].invalid }" />
+                        <div class="invalid-feedback"
+                            *ngIf="form.controls['first'].touched && form.controls['first'].invalid">
+                            Choose a number between 1 - 10
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="second" class="required-label"
+                            [ngClass]="{'text-danger': form.controls['second'].touched && form.controls['second'].invalid }">
+                            <b>Second Number</b>
+                        </label>
+                        <input type="number" class="form-control" formControlName="second" name="second" id="second"
+                            placeholder="Number between 1 - 10"
+                            [ngClass]="{'is-invalid': form.controls['second'].touched && form.controls['second'].invalid }" />
+                        <div class="invalid-feedback"
+                            *ngIf="form.controls['second'].touched && form.controls['second'].invalid">
+                            Choose a number between 1 - 10
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" (click)="addNewUser()" [disabled]="!form.valid">
+                        Register</button>
+
+                    <div class="alert alert-danger mt-3 mb-0" role="alert" *ngIf="serverError">
+                        <strong>Error:</strong> {{serverError}}
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
+        <div *ngIf="form.disabled" class="alert alert-success mb-0 mt-3" role="alert">
+            You are registered as <strong>{{name}}</strong>
+        </div>
+
+    </div>
+
+    <div class="col-6">
+        <ul ngbNav #nav="ngbNav" class="nav-pills nav-fill">
+            <li ngbNavItem>
+                <a ngbNavLink>Scoreboard</a>
+                <ng-template ngbNavContent>
+
+                    <div [ngSwitch]="currentGameStatus" class="pt-3">
+
+                        <ng-template [ngSwitchCase]="gameWaiting">
+                            <div class="text-center p-5 mt-5">
+                                <h3>Waiting For Players To Join...</h3>
+                            </div>
+                        </ng-template>
+
+                        <ng-template [ngSwitchCase]="countdownStarted">
+                            <div class="counting-down p-5 mt-5">
+                                <h3>{{countingDownModel?.type}}</h3>
+                                <h2>{{countingDownModel?.data}}</h2>
+                            </div>
+                        </ng-template>
+
+                        <ng-template [ngSwitchCase]="countingDown">
+                            <div class="counting-down p-5 mt-5">
+                                <h3>{{countingDownModel?.type}}</h3>
+                                <h2>{{countingDownModel?.data}}</h2>
+                            </div>
+                        </ng-template>
+
+                        <ng-template [ngSwitchCase]="gameStarted">
+                            <div class="text-center p-5 mt-5">
+                                <h3>Game Started</h3>
+                            </div>
+                        </ng-template>
+
+                        <ng-template [ngSwitchCase]="playedRound">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped table-hover align-middle">
+
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" class="text-center">Round</th>
+                                            <th scope="col" *ngFor="let player of players" class="text-center">
+                                                {{player.name}}
+                                            </th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        <tr *ngFor="let round of rounds">
+                                            <td scope="row" class="text-center">
+                                                <b>{{round.round}}</b>
+                                            </td>
+                                            <td *ngFor="let item of round.leader_board" class="text-center"
+                                                [ngClass]="{'round-winner': item.winner}">
+                                                {{item.score}}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+
+                                </table>
+                            </div>
+
+                        </ng-template>
+
+                        <ng-template [ngSwitchCase]="gameCompleted">
+                            <div class="text-center text-success p-5 mt-5">
+                                <h3>
+                                    <b>Leaderboard updated with winners.</b>
+                                </h3>
+                            </div>
+                        </ng-template>
+
+                        <ng-template [ngSwitchCase]="gameReset">
+                            <div class="text-center text-success p-5 mt-5">
+                                <h3>
+                                    <b>Leaderboard has been updated with winners.</b>
+                                </h3>
+                            </div>
+                        </ng-template>
+
+                    </div>
+
+                </ng-template>
+            </li>
+            <li ngbNavItem>
+                <a ngbNavLink>Players ( {{players.length}} )</a>
+                <ng-template ngbNavContent>
+
+                    <div class="pt-3">
+
+                        <div class="alert alert-primary" role="alert">
+                            Current game players will be visible, New players will be displayed in new game
+                        </div>
+
+                        <span class="badge text-white p-3 mr-2 mt-2 new-player"
+                            [ngClass]="{'bg-primary': player.joined, 'bg-warning': !player.joined}"
+                            *ngFor="let player of players">
+                            {{player.name}}
+                        </span>
+                    </div>
+
+                </ng-template>
+            </li>
+        </ul>
+        <div [ngbNavOutlet]="nav"></div>
+    </div>
+
+    <div class="col-3">
+        <div class="card border-0">
+            <h5 class="card-header text-white bg-primary">Leaderboard ( Previous Game )</h5>
+
+            <div class="card-body px-0 pt-0">
+
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center font-weight-bold"
+                        *ngFor="let player of lastGameWinnerList"
+                        [ngClass]="{'bg-primary text-white': name == player.name}">
+                        {{player.name}}
+                        <span class="badge rounded-pill score"
+                            [ngClass]="{'bg-primary text-white': name != player.name, 'bg-white text-dark': name == player.name }">{{player.score}}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="custom-toast">
+    <ngb-toast *ngIf="toastMessage" [autohide]="true" [delay]="3000" class="bg-primary text-white">
+        {{toastMessage}}
+    </ngb-toast>
+</div>
