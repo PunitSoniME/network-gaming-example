@@ -23,13 +23,6 @@
     font-size: 1rem;
 }
 
-@media (max-width: 768px) {
-    .main {
-        grid-template-columns: 40% 1fr;
-        gap: 10px;
-    }
-}
-
 .counting-down {
     display: flex;
     flex-direction: column;
@@ -50,4 +43,30 @@
     content: " *";
     color: var(--danger);
     font-weight: bold;
+}
+
+.waiting-for-players:after {
+    content: "";
+    animation: dots infinite 2s;
+}
+
+@keyframes dots {
+    35% {
+        content: ".";
+    }
+
+    55% {
+        content: "..";
+    }
+
+    85% {
+        content: "...";
+    }
+}
+
+@media (max-width: 768px) {
+    .main {
+        grid-template-columns: 40% 1fr;
+        gap: 10px;
+    }
 }

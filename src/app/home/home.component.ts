@@ -27,6 +27,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   playerJoined = "Player Joined";
   playerRegistered = "Player Registered";
 
+  joinButtonText = "Join Game";
+  joiningText = "Joining, Please Wait..."
+
   countingDownModel = null;
   serverError: string = null;
   rounds: IPlayedRound[] = [];
@@ -38,7 +41,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   form: FormGroup;
   name: string = null;
   lastGameWinnerList: string[] = [];
-  toastMessage: string = null;
+  toastMessage: { type: string, message: string } = null;
+
+  isServerOffline: boolean = false;
+  serverOfflineMessage: string = "Server is offline. Please check server.";
 
   constructor(
     private wsService: WebSocketService,
@@ -78,7 +84,11 @@ export class HomeComponent implements OnInit, OnDestroy {
 
               case this.playerJoined:
                 this.players = [...this.players, ...jsonData.data.map(d => { return { ...d, joined: false } })];
-                this.toastMessage = `${jsonData.data.map(d => { return d.name }).join(", ")} has joined the game`;
+                this.toastMessage = {
+                  type: "success",
+                  message: `${jsonData.data.map(d => { return d.name }).join(", ")} has joined the game`
+                };
+
                 break;
 
               case this.playerRegistered:
@@ -102,15 +112,22 @@ export class HomeComponent implements OnInit, OnDestroy {
             }
 
           },
-          err => console.log('err', err),
+          err => {
+            this.isServerOffline = true;
+            // this.toastMessage = { type: "danger", message: "Server is offline" };
+            console.log('err', err);
+          },
           () => console.log('The observable stream is complete')
         );
   }
 
-  addNewUser() {
+  sortedRoundsData = () => { return orderBy(this.rounds, ['round'], ['desc']) }
+
+  joinGame() {
 
     if (this.form.valid) {
       const user = this.form.value;
+      this.joinButtonText = this.joiningText;
 
       this.httpService.post<IUser>(`${environment.apiToConnect}/join`, user)
         .subscribe((res: IResponse) => {
@@ -118,8 +135,21 @@ export class HomeComponent implements OnInit, OnDestroy {
           this.form.disable();
           this.name = user.name;
 
+          this.joinButtonText = "Joined";
+          this.toastMessage = { type: "success", message: res.detail };
+          this.isServerOffline = false;
+
         }, (err: HttpErrorResponse) => {
-          this.serverError = err.error.detail;
+          this.joinButtonText = "Join Game";
+
+          if (err.error.status) {
+            this.serverError = err.error.detail;
+          }
+          else {
+            this.isServerOffline = true;
+            this.toastMessage = { type: "danger", message: this.serverOfflineMessage };
+          }
+
         });
     }
   }

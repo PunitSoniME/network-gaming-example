@@ -1,14 +1,23 @@
+<div class="alert alert-danger mt-3" role="alert" *ngIf="isServerOffline">
+    {{serverOfflineMessage}}
+</div>
+
 <div class="row my-3">
     <div class="col-3">
-
         <div class="card border-0">
-            <h5 class="card-header text-white bg-primary">Register for the game</h5>
+            <h5 class="card-header text-white bg-primary">Join the game</h5>
 
             <div class="card-body px-0 pb-0">
                 <form [formGroup]="form">
 
                     <div class="alert alert-warning" role="alert">
-                        <strong>Note</strong> Do not refresh this page after register.
+                        <h4 class="alert-heading">Note:</h4>
+                        <p>Do not refresh the page after join.</p>
+                        <hr />
+                        <p class="mb-0">
+                            If you join in the middle of the game, you will need to wait until the end of the
+                            current game.
+                        </p>
                     </div>
 
                     <div class="form-group">
@@ -53,8 +62,9 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary" (click)="addNewUser()" [disabled]="!form.valid">
-                        Register</button>
+                    <button type="submit" class="btn btn-primary" (click)="joinGame()"
+                        [disabled]="!form.valid || joinButtonText == joiningText">
+                        {{joinButtonText}}</button>
 
                     <div class="alert alert-danger mt-3 mb-0" role="alert" *ngIf="serverError">
                         <strong>Error:</strong> {{serverError}}
@@ -67,7 +77,6 @@
         <div *ngIf="form.disabled" class="alert alert-success mb-0 mt-3" role="alert">
             You are registered as <strong>{{name}}</strong>
         </div>
-
     </div>
 
     <div class="col-6">
@@ -80,7 +89,7 @@
 
                         <ng-template [ngSwitchCase]="gameWaiting">
                             <div class="text-center p-5 mt-5">
-                                <h3>Waiting For Players To Join...</h3>
+                                <h3 class="waiting-for-players">Waiting For Players To Join</h3>
                             </div>
                         </ng-template>
 
@@ -118,7 +127,7 @@
                                     </thead>
 
                                     <tbody>
-                                        <tr *ngFor="let round of rounds">
+                                        <tr *ngFor="let round of sortedRoundsData()">
                                             <td scope="row" class="text-center">
                                                 <b>{{round.round}}</b>
                                             </td>
@@ -199,7 +208,8 @@
 </div>
 
 <div class="custom-toast">
-    <ngb-toast *ngIf="toastMessage" [autohide]="true" [delay]="3000" class="bg-primary text-white">
-        {{toastMessage}}
+    <ngb-toast *ngIf="toastMessage" [autohide]="true" [delay]="3000" class="text-white" [ngClass]="{'bg-primary': toastMessage.type == 'primary', 'bg-danger': toastMessage.type == 'danger',
+        'bg-success': toastMessage.type == 'success' }">
+        {{toastMessage.message}}
     </ngb-toast>
 </div>
