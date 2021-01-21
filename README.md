@@ -1,3 +1,6 @@
+# Code is written in Angular Version 11
+# Production code is also checked in, in case you don't have Angular 11, You can directly run app from dist/network-gaming-example folder.
+
 # Game Description
 
 Game screen is separated in 3 blocks
