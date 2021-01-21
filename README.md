@@ -4,7 +4,7 @@
 # Game Description
 
 Game screen is separated in 3 blocks
-1. To join user ( Do not refresh after join, other wise you will lose your current player name )
+1. To join user ( Do not refresh after join, otherwise you will lose your current player name )
 2. Score board and players who are in current game
 3. Leader Board with highest score players on top and lower score players on bottom ( Current player will be highlighted by blue color so he/she can find their position on game leader board )
 
