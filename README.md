@@ -1,27 +1,11 @@
-# NetworkGamingExample
+# Game Description
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.0.7.
+Game screen is separated in 3 blocks
+1. To register user ( Do not refresh after register, other wise you will lose your current player name )
+2. Score board and players who are in current game
+3. Leader Board with highest score players on top and lower score players on bottom ( Current player will be highlighted by blue color so he/she can find their position on game leader board )
 
-## Development server
+Game will lasts 30 rounds or when any player makes 21 score. Once winner will be decided, game will restart with new players and score board will be updated by the highest score player on top and lower score player on bottom.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+# Note: I can make a code by which current game player won't lose their stats even after refresh.

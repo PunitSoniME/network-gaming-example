@@ -1,12 +1,12 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup, MaxLengthValidator, RequiredValidator, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { IResponse } from '../services/http/http.classes';
 import { HttpService } from '../services/http/http.service';
 import { WebSocketService } from '../services/web-socket/web-socket.service';
-import { IUser } from './home.interface';
+import { IPlayedRound, IPlayers, IUser } from './home.interface';
 import * as orderBy from 'lodash.orderby';
 
 @Component({
@@ -28,20 +28,15 @@ export class HomeComponent implements OnInit, OnDestroy {
   playerRegistered = "Player Registered";
 
   countingDownModel = null;
-  gameCompletedModel = null;
-
   serverError: string = null;
-  rounds: any[] = [];
-  players: any[] = [];
-  numbers: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  rounds: IPlayedRound[] = [];
+  players: IPlayers[] = [];
   wsSubscription: Subscription;
-  activeUsers: IUser[] = [];
 
   currentGameStatus: string = null;
 
   form: FormGroup;
   name: string = null;
-  newPlayers: string[] = [];
   lastGameWinnerList: string[] = [];
   toastMessage: string = null;
 
@@ -55,8 +50,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.form = new FormGroup({
       name: new FormControl(null, [Validators.required]),
-      first: new FormControl(null, [Validators.required, Validators.min(1), Validators.max(10)]),
-      second: new FormControl(null, [Validators.required, Validators.min(1), Validators.max(10)]),
+      first: new FormControl(null, [Validators.required, Validators.min(1), Validators.max(10), Validators.pattern(/^-?(0|[1-9]\d*)?$/)]),
+      second: new FormControl(null, [Validators.required, Validators.min(1), Validators.max(10), Validators.pattern(/^-?(0|[1-9]\d*)?$/)]),
     })
   }
 
@@ -124,16 +119,13 @@ export class HomeComponent implements OnInit, OnDestroy {
           this.name = user.name;
 
         }, (err: HttpErrorResponse) => {
-          // reject(err.error);
           this.serverError = err.error.detail;
         });
     }
   }
 
   closeSocket() {
-    // this.wsSubscription.unsubscribe();
     this.wsService.close();
-    // this.status = 'The socket is closed';
   }
 
   ngOnDestroy() {
